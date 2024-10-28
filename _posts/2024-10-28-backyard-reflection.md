@@ -52,7 +52,7 @@ In traditional, statistics are primarily still tracked by people. This has somet
 _Look closely as the model loses vision on 'Tension' on the bottom_
 
 Low Gauge Values
-: The model struggles to keep track when values are low in the tension gauge at the bottom and the burst bar after the **Psych Burst**. If you inspect the data on [backyard-insight](backyard-insight.info) closely, you'll see that the burst bar never truley goes to 0% because of this only reporing a values once it reaches around 8%.
+: The model struggles to keep track when values are low in the tension gauge at the bottom and the burst bar after the **Psych Burst**. If you inspect the data on [backyard-insight](https://backyard-insight.info/) closely, you'll see that the burst bar never truley goes to 0% because of this only reporing a values once it reaches around 8%.
 
 False Negatives
 : Sometimes, for whatever reason, the vision model will just lose track of an object for a frame. You can see the model 'flicker' as it tracks the tension gauge. This is partly because when training the model false negatives where preferred over false positives. We would rather not see the tension gauge rather than report the tension gauge as something else entirely. For the most part false negatives are easier to deal with, ignore the frame where you don't see the value. The trade-off is that it became hard to distinguish why the model had lost track of the object. Was it a false negative or did the value actually go to 0? This is compounded by the issues with low gauge values.
