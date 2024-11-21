@@ -3,21 +3,22 @@ title: The 'Backyard' Reflection
 date: 2024-10-28 07:00:00 +1000
 categories: [Backyard]
 tags: [machine-learning]
-desicrption: A retrospective on the development of the 'Backyard'
+description: A retrospective on the development of the 'Backyard'
 ---
+
 If you want a full picture of what the 'Backyard' is and the development behind it, I would suggest reading the preceding blogpost: 'The 'Backyard' Chronicles'. The 'Backyard' is very much a proof-of-concept meant to show how it's possible to use machine learning to obtain interesting statistics and visualisations in the niche of fighting games. I want to take some time to reflect on the project, what I learnt along the way and how viable is it?
 
 ## What does the 'Backyard' tell us about *Guilty Gear -Strive-*?
 ![Tension vs Health](../assets/img/backyard-reflection/tension_vs_health.png)
 _Tension and Health_
 
-It took hundreds of engineering hours to basically tell us that the amount of 'health' a player has is the primary indicator of who wins. Since health is directly correlated with winning i.e. a round ends when a player reaches 0 health, health being the primary indicator should not be as surprise. The reason to build out the rest of the model is to try and quantify exactly how favoured the player is to win. In the graph above shows the relationship between a player's health at different tension values. What we see is expected, all the lines of tension follow roughly the same trends and ultimately the higher the tension and health, the higher the probability to win. A similar trend appears for other features, burst, damage and counters. However there is something interesting in the 'set/match' predictor.
+It took hundreds of engineering hours to tell us that the player with more health wins... Since health is directly correlated with winning i.e. a round ends when a player reaches 0 health, health being the primary indicator should not be as surprise. The reason to build out the rest of the model is to try and quantify other factors affect winning. The graph above shows the relationship between a player's health at different tension values. What we see is expected, all the lines of tension follow roughly the same trends and ultimately the higher the tension and health, the higher the probability to win. A similar trend appears for other features, burst, damage and counters. However there is something interesting in the 'game' (set/match) predictor.
 
 ![Tension vs Health](../assets/img/backyard-reflection/burst_vs_round.png)
 _Burst and Round Count_
 
 A match in *Guilty Gear -Strive-* consists of a best of 3. Therefore there can only be four states that the match can have, both players with 0 wins, both players with 1 win, either player 1 or player 2 have a win. This is represented in the label as `player wins:opponent wins`. The `0:0` and `1:1`
-are both states where both players are equal and it wouldn't have been ridiculous to assume thath these lines would match but not only are they different, the `0:0` line has a **higher** predicted win percentage when `burst` is lower. That is counter-intuitive to what we've seen up until this point. There is an important point of distinction between `1:1` and `0:0`. When the game first starts at `0:0` both player always start with 100% burst. However going into `1:1` that is not always the case. The most prominent use of the burst bar is **Psych Burst** which requires 100% of the bar. It is possible for a player to never be able to **Psych Burst** in the `1:1` round and therefore it follows that having burst would result in a higher win percentage. On the other hand, in the `0:0` round both players would always have a chance to use **Psych Burst** therefore a 0% burst becomes synonymous with using a **Psych Burst** rather than not having burst. A similar trend can be seen in the `1:0` as only one more round win is needed, using a **Psych Burst** to secure a win is preferable to holding it. So is the data telling us it's always better to use burst in the `0:0` round rather than hold it? It is important to remember that this model was only trained on matches of high ranking players which may introduce a bias to the results. Is it good to always burst at `0:0` or do high-ranking players only burst at oppurtune moments? At the moment I don't think that question is possible to answer with the limited dataset used here. I would be interested to see if the trend holds up if we were to greatly expand the dataset to explore more matches and more levels of play.
+are both states where both players are equal.  these lines would match but not only are they different, the `0:0` line has a **higher** predicted win percentage when `burst` is lower. That is counter-intuitive to what we've seen up until this point. There is an important point of distinction between `1:1` and `0:0`. When the game first starts at `0:0` both player always start with 100% burst. However going into `1:1` that is not always the case. The most prominent use of the burst bar is **Psych Burst** which requires 100% of the bar. It is possible for a player to never be able to **Psych Burst** in the `1:1` round and therefore it follows that having burst would result in a higher win percentage. On the other hand, in the `0:0` round both players would always have a chance to use **Psych Burst** therefore a 0% burst becomes synonymous with using a **Psych Burst** rather than not having burst. A similar trend can be seen in the `1:0` as only one more round win is needed, using a **Psych Burst** to secure a win is preferable to holding it. So is the data telling us it's always better to use burst in the `0:0` round rather than hold it? It is important to remember that this model was only trained on matches of high ranking players which may introduce a bias to the results. Is it good to always burst at `0:0` or do high-ranking players only burst at oppurtune moments? At the moment I don't think that question is possible to answer with the limited dataset used here. I would be interested to see if the trend holds up if we were to greatly expand the dataset to explore more matches and more levels of play.
 
 A similar phenomenon is seen with the **Asuka Spell** model. A quick rundown on how Asuka works, Asuka can hold a hand of up to 4 spells that he's free to cast or discard. Mana is required to cast these spells. After casting, he can draw spells from three distinct polls of cards known as *Test Cases*. All Asuka's start on *Test Case 1* and most try to move to *Test Case 3* widely regarded as the strongest. Intuitively you would expect the lowest performing spell hands to be when Asuka can not cast any spells either if the hand is empty or he has no mana. Strangely enough the lowest performing spell hands are:
 
@@ -102,7 +103,10 @@ It's not only a more sophisticated AI than the CPUs that were shipped at launch 
 For the future of the 'Backyard', I do want to try and keep it up to date with tournaments as they happen. There is multiple routes I could take this and I have not really decided which avenue I will pursue or when I will resume working on it.
 
 Refine the current models
-: Especially now that Season 4 has dropped and introduced a whole suite of system changes and Asuka spell changes, it is likely the models created will no longer be accurate. There are also some improvements I've made to data collection and cleaning since the initial collection for the training set that I would want to apply.
+: Especially now that Season 4 has dropped and introduced a whole suite of system changes and Asuka spell changes, it is likely the models created will no longer be accurate. There are also some improvements I've made to data collection and cleaning since the initial collection for the training set that I would want to go back and apply.
+
+Expose an API
+: Currently there is no way for an external user to interact with the data outside the dashboard. Providing an API such that interested parties can perform their own analysis and create their own dashboards or visualisations.
 
 Automate the Process
 : At the moment the process to analyse a tournament is still quite manual and fragile.
@@ -115,11 +119,11 @@ Automate the Process
 
 The first change I would make is to remove the reliance on the filename. At the moment the filename holds information such as player and character names. Character names should be automated by using OCR to read the character's name on the health bar at round start. The player may have to remain manual but should be moved out of the file name, such as a json mapping of matches -> players. The work done in the notebook should be assimilated into **Backyard-Observer**.
 
-Live Stat Tracking:
-The stats are now provided retrospectively after a tournament. It would be able to provide this information as the tournament is happening. The above automation work will be necessary however additional consideration around how a live video being ingested needs to be considered.
+Live Stat Tracking
+: The stats are now provided retrospectively after a tournament. It would be able to provide this information as the tournament is happening. The above automation work will be necessary however additional consideration around how a live video being ingested needs to be considered.
 
-Apply Backyard-Observer and Insight to your games:
-Create an application that will ingest videos of your games and create a dashboard similar to Backyard-Insight. I have not thought too much more about how to actually achieve this though.
+Apply Backyard-Observer and Insight to your games
+: Create an application that will ingest videos of your games and create a dashboard similar to Backyard-Insight. I have not thought too much more about how to actually achieve this though.
 
 Try and track character's actions
 : If you read the previous blog post, this was what the idea was originally before it became infeasible. One of the reasons I had dismissed it was because sourcing good examples of the moves was becoming difficult. However I'm hoping the way the techniques used to create the synthetic frames can be applied here as well. It would require a frame-by-frame breakdown of every move which is possible shown in [Project Brisket](https://github.com/aishyuu/project-brisket).

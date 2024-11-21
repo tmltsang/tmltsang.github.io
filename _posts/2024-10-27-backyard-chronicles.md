@@ -3,7 +3,7 @@ title: The 'Backyard' Chronicles
 date: 2024-10-27 07:00:00 +1000
 categories: [Backyard]
 tags: [machine-learning]
-desicrption: An in-depth dive into the technical details and development journey
+description: An in-depth dive into the technical details and development journey
 ---
 
 ## What is the 'Backyard'?
